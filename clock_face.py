@@ -6,20 +6,29 @@ class pi_clock_face:
     clock_mode = True
     clock_fade = 1
     timer = None
+    fade_speed = 100
+    enable_fade = False
 
+    def __init__(self,fade_speed=100,enable_fade=False):
+        self.fade_speed = fade_speed
+        self.enable_fade = enable_fade
+        
 
-    def __init__(self):
-        self.timer = threading.Timer(10.0, self.__switch_off_clock) 
-        self.timer.start()
+    def start_fade(self):
+        if self.enable_fade:
+            self.timer = threading.Timer(10.0, self.__switch_off_clock) 
+            self.timer.start()
 
     def reset_clock(self):
         self.timer.cancel()
         self.clock_mode = True
-        self.timer = threading.Timer(10.0, self.__switch_off_clock)
-        self.timer.start()
+        self.start_fade()
+
+    def kill_clock(self):
+        if self.timer is not None:
+            self.timer.cancel()
 
     def __switch_off_clock(self):
-        print('Switcing off clock')
         self.clock_mode = False
         self.clock_fade = 1
 
@@ -28,7 +37,7 @@ class pi_clock_face:
             return (255,255,255)
         else:
             clock_colour = (255*self.clock_fade,255*self.clock_fade,255*self.clock_fade)
-            self.clock_fade = self.clock_fade - 0.01
+            self.clock_fade = self.clock_fade - (1/self.fade_speed)
             if self.clock_fade < 0:
                 self.clock_fade = 0
             return clock_colour
