@@ -18,10 +18,8 @@ def run_clock():
 
     screen = pygame.display.set_mode((320, 240))
     clock = pygame.time.Clock()
-    pi_clock = pi_clock_face(clock_ticks)
+    pi_clock = pi_clock_face(clock_surface=pygame.Surface((320,240)),fade_speed=clock_ticks)
     done = False
-
-    open_24_display_font = pygame.font.Font('DIN.ttf', 20)
 
     while not done:
 
@@ -35,70 +33,10 @@ def run_clock():
                     print('space pressed')
                     pi_clock.reset_clock()
 
-        curr_time = datetime.now()
-
         screen.fill((0, 0, 0))
 
-        minute_text = 'exactly'
-        hour_text = 'midnight'
+        screen.blit(pi_clock.draw_clock(), (0, 0))
 
-        if curr_time.minute == 0:
-            minute_text = 'exactly'
-        elif curr_time.minute < 30:
-            if curr_time.minute == 15:
-                minute_text = 'quarter past'
-            else:
-                minute_text = num2words(curr_time.minute) + ' minutes past'
-        elif curr_time.minute == 30:
-            minute_text = 'half past'
-        elif curr_time.minute > 30:
-            if curr_time.minute == 45:
-                minute_text = 'quarter to'
-            else:
-                minute_text = num2words(curr_time.minute) + ' minutes to'
-
-        curr_hour = curr_time.hour
-        if curr_time.minute > 30:
-            curr_hour = curr_hour + 1
-
-        if curr_hour == 24:
-            curr_hour = 0
-
-        if curr_hour == 0:
-            hour_text = 'midnight'
-        elif curr_hour < 12:
-            hour_text = num2words(curr_hour) + ' am'
-        elif curr_hour == 12:
-            hour_text = 'noon'
-        elif curr_hour > 12:
-            hour_text = num2words(curr_hour-12) + ' pm'
-        
-        seconds_text = 'and ' + num2words(curr_time.second) + ' second'
-
-        if curr_time.second > 1:
-            seconds_text = seconds_text + 's'
-        elif curr_time.second == 0:
-            seconds_text = 'exactly'
-            
-
-        screen.blit(open_24_display_font.render('It is'.upper(),
-                                                True,
-                                                pi_clock.get_curr_clock_colour()),
-                    (5, 110))
-        screen.blit(open_24_display_font.render(minute_text.upper(),
-                                                True,
-                                                pi_clock.get_curr_clock_colour()),
-                    (5, 140))
-
-        screen.blit(open_24_display_font.render(hour_text.upper(),
-                                                True,
-                                                pi_clock.get_curr_clock_colour()),
-                    (5, 170))
-
-        screen.blit(open_24_display_font.render(seconds_text.upper(),
-                                                True,
-                                                pi_clock.get_curr_clock_colour()),
-                    (5, 200))
         pygame.display.flip()
         clock.tick(clock_ticks)
 
